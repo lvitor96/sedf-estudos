@@ -68,16 +68,25 @@ async function _carregarDadosUsuario() {
   const usuario = obterUsuario();
   if (!usuario) return;
 
+  // Timeout guard: Firestore getDocs pode nunca resolver/rejeitar se o domínio
+  // não estiver autorizado no Firebase Console ou a conexão travar.
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('timeout')), 8000)
+  );
+
   try {
-    const [marcacoesSnap, progressoSnap] = await Promise.all([
-      getDocs(collection(db, 'users', usuario.uid, 'questoesStatus')),
-      getDocs(collection(db, 'users', usuario.uid, 'progresso')),
+    const [marcacoesSnap, progressoSnap] = await Promise.race([
+      Promise.all([
+        getDocs(collection(db, 'users', usuario.uid, 'questoesStatus')),
+        getDocs(collection(db, 'users', usuario.uid, 'progresso')),
+      ]),
+      timeout,
     ]);
 
     marcacoesSnap.forEach(d => { M.marcacoes[d.id] = d.data().marcacao; });
     progressoSnap.forEach(d => { M.progresso[d.id] = d.data(); });
   } catch (e) {
-    // offline — dados ficam em cache do Firestore
+    // offline ou timeout — dados ficam em cache do Firestore
     console.warn('Carregando dados offline:', e);
   }
 }

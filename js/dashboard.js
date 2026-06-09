@@ -18,10 +18,13 @@ export async function iniciarDashboard() {
 
   const hoje = new Date().toISOString().slice(0, 10);
 
+  const _t = (p) => Promise.race([p,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000))]);
+
   const [logRes, dailyRes, statusRes, questoesRes] = await Promise.allSettled([
-    getDoc(doc(db, 'users', usuario.uid, 'cronograma', 'log')),
-    getDoc(doc(db, 'users', usuario.uid, 'daily', hoje)),
-    getDocs(collection(db, 'users', usuario.uid, 'questoesStatus')),
+    _t(getDoc(doc(db, 'users', usuario.uid, 'cronograma', 'log'))),
+    _t(getDoc(doc(db, 'users', usuario.uid, 'daily', hoje))),
+    _t(getDocs(collection(db, 'users', usuario.uid, 'questoesStatus'))),
     fetch('./data/questoes.json').then(r => r.json()),
   ]);
 

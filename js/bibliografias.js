@@ -113,7 +113,7 @@ function _htmlCard(obra) {
     : '';
 
   const btnDrive = obra.tipo !== 'legislacao'
-    ? `<a href="https://drive.google.com/drive/search?q=${encodeURIComponent(obra.titulo)}" target="_blank" rel="noopener noreferrer" class="bib-btn bib-btn-drive">📁 Abrir no Drive</a>`
+    ? `<a href="https://drive.google.com/drive/folders/1dlXElpIqg9CAO6l9rzJOxVDRsiFyUWnw" target="_blank" rel="noopener noreferrer" class="bib-btn bib-btn-drive">📁 Abrir no Drive</a>`
     : '';
 
   return `

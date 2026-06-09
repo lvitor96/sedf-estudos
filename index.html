@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <!-- PWA / iOS -->
+  <meta name="theme-color" content="#1a3a5c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SEDF Estudos">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- SEO / Open Graph -->
+  <meta name="description" content="Plataforma de estudos para o concurso da SEDF — Professor de Educação Básica (Música / CEP-EMB)">
+  <meta name="author" content="Lucas">
+  <title>SEDF Estudos — Professor de Música</title>
+
+  <!-- Manifest & Icons -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dark.css">
+  <link rel="stylesheet" href="css/questoes.css">
+  <link rel="stylesheet" href="css/resumos.css">
+  <link rel="stylesheet" href="css/cronograma.css">
+  <link rel="stylesheet" href="css/simulado.css">
+  <link rel="stylesheet" href="css/estatisticas.css">
+  <link rel="stylesheet" href="css/legislacao.css">
+  <link rel="stylesheet" href="css/videoaulas.css">
+  <link rel="stylesheet" href="css/edital.css">
+  <link rel="stylesheet" href="css/carro.css">
+  <link rel="stylesheet" href="css/bibliografias.css">
+
+  <!-- Firebase Import Map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app":       "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "firebase/auth":      "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+      "firebase/storage":   "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"
+    }
+  }
+  </script>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     TELA 1 — LOADING
+     ════════════════════════════════════════════ -->
+<div id="tela-loading" class="tela">
+  <div class="loading-logo">
+    <div class="loading-icone">🎵</div>
+    <h1 class="loading-titulo">SEDF Estudos</h1>
+    <p class="loading-sub">Carregando...</p>
+  </div>
+  <div class="spinner"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TELA 2 — LOGIN
+     ════════════════════════════════════════════ -->
+<div id="tela-login" class="tela oculto">
+  <div class="login-container">
+    <div class="login-logo">
+      <div class="login-icone">🎵</div>
+      <h1>SEDF Estudos</h1>
+      <p>Professor de Educação Básica — Música</p>
+      <span class="login-tag">CEP-EMB · Concurso Público</span>
+    </div>
+
+    <button id="btn-google-login" class="btn-google">
+      <svg class="btn-google-logo" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Entrar com Google
+    </button>
+
+    <p class="login-aviso">
+      Seus dados ficam salvos na sua conta Google e sincronizados entre todos os seus dispositivos. Funciona offline.
+    </p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TELA 3 — SELETOR DE MODO
+     ════════════════════════════════════════════ -->
+<div id="tela-modo" class="tela oculto">
+  <div class="modo-container">
+    <div class="modo-header">
+      <h2>Como você está agora?</h2>
+      <p>O app se adapta ao seu contexto de estudo</p>
+    </div>
+
+    <div class="modo-cards">
+      <button class="modo-card" data-modo="metro">
+        <span class="modo-emoji">🚇</span>
+        <div class="modo-info">
+          <strong>Metrô</strong>
+          <span>Tenho pouco tempo, quero algo rápido. Sem fone.</span>
+        </div>
+        <span class="modo-badge"></span>
+      </button>
+
+      <button class="modo-card" data-modo="mesa">
+        <span class="modo-emoji">🖥️</span>
+        <div class="modo-info">
+          <strong>Mesa</strong>
+          <span>Estou focado, tenho 2h ou mais para estudar.</span>
+        </div>
+        <span class="modo-badge"></span>
+      </button>
+
+      <button class="modo-card" data-modo="carro">
+        <span class="modo-emoji">🚗</span>
+        <div class="modo-info">
+          <strong>Carro</strong>
+          <span>Só posso ouvir. Conteúdo em áudio.</span>
+        </div>
+        <span class="modo-badge"></span>
+      </button>
+    </div>
+
+    <button id="btn-pular-modo" class="btn-pular">
+      Pular — ir direto ao Dashboard
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TELA 4 — APP PRINCIPAL
+     ════════════════════════════════════════════ -->
+<div id="tela-app" class="tela oculto" style="flex-direction:column;align-items:stretch;justify-content:flex-start;">
+
+  <!-- Banner offline -->
+  <div id="banner-offline" class="oculto" role="status" aria-live="polite">
+    📵 Offline — alterações serão sincronizadas ao reconectar
+  </div>
+
+  <!-- Corpo do app: sidebar + conteúdo -->
+  <div class="app-corpo">
+
+    <!-- Sidebar (desktop) -->
+    <aside id="sidebar" role="navigation" aria-label="Menu principal">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">🎵</div>
+        <div>
+          <h2>SEDF Estudos</h2>
+          <small id="sidebar-modo-badge">Sem modo</small>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item ativo" data-painel="dashboard">
+          <span class="nav-icone" aria-hidden="true">🏠</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-painel="estudar">
+          <span class="nav-icone" aria-hidden="true">📚</span>
+          <span>Estudar</span>
+        </button>
+        <button class="nav-item" data-painel="questoes">
+          <span class="nav-icone" aria-hidden="true">❓</span>
+          <span>Questões</span>
+        </button>
+        <button class="nav-item" data-painel="simulado">
+          <span class="nav-icone" aria-hidden="true">⏱️</span>
+          <span>Simulado</span>
+        </button>
+        <button class="nav-item" data-painel="estatisticas">
+          <span class="nav-icone" aria-hidden="true">📊</span>
+          <span>Estatísticas</span>
+        </button>
+        <button class="nav-item" data-painel="legislacao">
+          <span class="nav-icone" aria-hidden="true">⚖️</span>
+          <span>Legislação</span>
+        </button>
+        <button class="nav-item" data-painel="videoaulas">
+          <span class="nav-icone" aria-hidden="true">🎬</span>
+          <span>Videoaulas</span>
+        </button>
+        <button class="nav-item" data-painel="edital">
+          <span class="nav-icone" aria-hidden="true">📋</span>
+          <span>Edital</span>
+        </button>
+        <button class="nav-item" data-painel="cronograma">
+          <span class="nav-icone" aria-hidden="true">📅</span>
+          <span>Cronograma</span>
+        </button>
+        <button class="nav-item" data-painel="bibliografias">
+          <span class="nav-icone" aria-hidden="true">📖</span>
+          <span>Bibliografias</span>
+        </button>
+        <button class="nav-item" data-painel="config">
+          <span class="nav-icone" aria-hidden="true">⚙️</span>
+          <span>Configurações</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-usuario">
+        <img id="sidebar-foto" class="sidebar-foto" src="" alt="Foto do usuário" width="32" height="32">
+        <div style="flex:1;min-width:0;">
+          <div id="sidebar-nome" class="sidebar-nome">—</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4);">Conta Google</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Conteúdo principal -->
+    <div id="conteudo-principal">
+
+      <!-- Barra de modo ativo -->
+      <div id="barra-modo" class="oculto" style="flex-shrink:0;height:var(--altura-barra-modo);background:var(--cor-primaria);display:flex;align-items:center;padding:0 16px;gap:8px;">
+        <span id="barra-modo-icone" class="barra-modo-icone"></span>
+        <span id="barra-modo-nome" class="barra-modo-nome"></span>
+        <button id="btn-mudar-modo" class="btn-mudar-modo">Mudar</button>
+      </div>
+
+      <!-- Wrapper dos painéis -->
+      <div class="paineis-wrapper">
+
+        <!-- Dashboard -->
+        <section id="painel-dashboard" class="painel ativo" aria-label="Dashboard">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Estudar (Resumos) -->
+        <section id="painel-estudar" class="painel" aria-label="Banco de Resumos">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Questões -->
+        <section id="painel-questoes" class="painel" aria-label="Banco de Questões">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Legislação -->
+        <section id="painel-legislacao" class="painel" aria-label="Textos Legais">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Estatísticas -->
+        <section id="painel-estatisticas" class="painel" aria-label="Estatísticas">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Simulado -->
+        <section id="painel-simulado" class="painel" aria-label="Simulado Cronometrado">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Modo Carro -->
+        <section id="painel-carro" class="painel" aria-label="Modo Carro — Áudio">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Edital Ativo -->
+        <section id="painel-edital" class="painel" aria-label="Edital Ativo">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Videoaulas -->
+        <section id="painel-videoaulas" class="painel" aria-label="Videoaulas">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Cronograma -->
+        <section id="painel-cronograma" class="painel" aria-label="Cronograma de Estudos">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Bibliografias -->
+        <section id="painel-bibliografias" class="painel" aria-label="Bibliografias">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Configurações -->
+        <section id="painel-config" class="painel" aria-label="Configurações">
+
+          <div class="painel-header" data-emoji="⚙️">
+            <div class="painel-header-titulo">Configurações</div>
+          </div>
+
+          <!-- Perfil -->
+          <div class="secao">
+            <div class="secao-header"><h3 class="secao-titulo">Perfil</h3></div>
+            <div class="card" style="padding:16px;display:flex;align-items:center;gap:14px;">
+              <img id="cfg-user-photo" class="avatar" src="" width="48" height="48" alt="Foto do usuário">
+              <div>
+                <div id="cfg-user-name" style="font-weight:700;font-size:15px;">—</div>
+                <div id="cfg-user-email" style="font-size:12px;color:var(--cor-texto-leve);">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aparência -->
+          <div class="secao" style="padding-top:0;">
+            <div class="secao-header"><h3 class="secao-titulo">Aparência</h3></div>
+            <div class="card" style="padding:16px;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-weight:600;font-size:14px;">Modo Escuro</div>
+                <div style="font-size:12px;color:var(--cor-texto-leve);">Reduz o brilho da tela</div>
+              </div>
+              <button id="toggle-dark" class="btn btn-sm" style="min-width:64px;">☀️ OFF</button>
+            </div>
+          </div>
+
+          <!-- Integrações -->
+          <div class="secao" style="padding-top:0;">
+            <div class="secao-header"><h3 class="secao-titulo">Integrações</h3></div>
+            <div class="card" style="padding:16px;display:flex;flex-direction:column;gap:14px;">
+
+              <div style="font-size:13px;color:var(--cor-texto-leve);line-height:1.5;">
+                Configure a <strong>Google Cloud TTS</strong> para voz neural mais natural no
+                <strong>Modo Carro</strong>. Sem chave, usa a Web Speech API (voz do sistema).
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <label for="cfg-tts-key"
+                  style="font-size:12px;font-weight:600;color:var(--cor-texto);letter-spacing:.3px;text-transform:uppercase;">
+                  Chave Google Cloud TTS
+                </label>
+                <input id="cfg-tts-key" type="password"
+                  placeholder="AIzaSy…"
+                  autocomplete="off"
+                  style="padding:9px 12px;border:1px solid var(--cor-borda);border-radius:var(--raio-sm);background:var(--cor-fundo);color:var(--cor-texto);font-size:13px;font-family:monospace;width:100%;box-sizing:border-box;">
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <label for="cfg-tts-voice"
+                  style="font-size:12px;font-weight:600;color:var(--cor-texto);letter-spacing:.3px;text-transform:uppercase;">
+                  Voz
+                </label>
+                <select id="cfg-tts-voice"
+                  style="padding:9px 12px;border:1px solid var(--cor-borda);border-radius:var(--raio-sm);background:var(--cor-fundo);color:var(--cor-texto);font-size:13px;width:100%;box-sizing:border-box;">
+                  <option value="pt-BR-Neural2-B">Neural2-B — Masculina (recomendado)</option>
+                  <option value="pt-BR-Neural2-C">Neural2-C — Feminina</option>
+                  <option value="pt-BR-Standard-B">Standard-B — Masculina</option>
+                  <option value="pt-BR-Standard-C">Standard-C — Feminina</option>
+                </select>
+              </div>
+
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div id="cfg-tts-status" style="font-size:12px;flex:1;">
+                  <span style="color:var(--cor-texto-leve);">⚠️ Sem chave &mdash; usando Web Speech API</span>
+                </div>
+                <button id="cfg-tts-save" class="btn btn-sm" style="white-space:nowrap;">Salvar</button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Sobre -->
+          <div class="secao" style="padding-top:0;">
+            <div class="secao-header"><h3 class="secao-titulo">Sobre</h3></div>
+            <div class="card" style="padding:16px;">
+              <div style="font-size:13px;color:var(--cor-texto-leve);line-height:1.7;">
+                <div><strong>App:</strong> SEDF Estudos v0.1.0</div>
+                <div><strong>Cargo:</strong> Professor de Educação Básica — Música</div>
+                <div><strong>Escola:</strong> CEP-EMB · Concurso Público SEDF</div>
+                <div style="margin-top:8px;font-size:11px;opacity:.6;">Banco de questões: provas reais (Quadrix, IADES)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Logout -->
+          <div class="secao" style="padding-top:0;">
+            <button id="btn-logout" class="btn btn-outline btn-full" style="color:var(--cor-erro);border-color:var(--cor-erro);">
+              Sair da conta
+            </button>
+          </div>
+
+        </section>
+
+      </div><!-- /paineis-wrapper -->
+    </div><!-- /conteudo-principal -->
+  </div><!-- /app-corpo -->
+
+  <!-- Navegação inferior (mobile) -->
+  <!-- Menu "Mais" — módulos secundários -->
+  <div id="nav-mais-menu" class="nav-mais-menu oculto" role="dialog" aria-label="Mais módulos">
+    <div class="nav-mais-grade">
+      <button class="nav-mais-item" data-painel="cronograma">
+        <span class="nav-mais-icone">📅</span>
+        <span>Cronograma</span>
+      </button>
+      <button class="nav-mais-item" data-painel="estatisticas">
+        <span class="nav-mais-icone">📊</span>
+        <span>Estatísticas</span>
+      </button>
+      <button class="nav-mais-item" data-painel="legislacao">
+        <span class="nav-mais-icone">⚖️</span>
+        <span>Legislação</span>
+      </button>
+      <button class="nav-mais-item" data-painel="videoaulas">
+        <span class="nav-mais-icone">🎬</span>
+        <span>Videoaulas</span>
+      </button>
+      <button class="nav-mais-item" data-painel="edital">
+        <span class="nav-mais-icone">📋</span>
+        <span>Edital</span>
+      </button>
+      <button class="nav-mais-item" data-painel="bibliografias">
+        <span class="nav-mais-icone">📖</span>
+        <span>Bibliogr.</span>
+      </button>
+      <button class="nav-mais-item" data-painel="config">
+        <span class="nav-mais-icone">⚙️</span>
+        <span>Config.</span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="nav-inferior" role="navigation" aria-label="Navegação principal">
+    <button class="nav-item ativo" data-painel="dashboard">
+      <span class="nav-icone" aria-hidden="true">🏠</span>
+      <span>Dashboard</span>
+    </button>
+    <button class="nav-item" data-painel="estudar">
+      <span class="nav-icone" aria-hidden="true">📚</span>
+      <span>Estudar</span>
+    </button>
+    <button class="nav-item" data-painel="questoes">
+      <span class="nav-icone" aria-hidden="true">❓</span>
+      <span>Questões</span>
+    </button>
+    <button class="nav-item" data-painel="simulado">
+      <span class="nav-icone" aria-hidden="true">⏱️</span>
+      <span>Prova</span>
+    </button>
+    <button class="nav-item" id="nav-btn-mais">
+      <span class="nav-icone" aria-hidden="true">⋯</span>
+      <span>Mais</span>
+    </button>
+  </nav>
+
+</div><!-- /tela-app -->
+
+<!-- Toast de notificação -->
+<div id="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- App (ES Module) -->
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>

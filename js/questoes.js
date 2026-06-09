@@ -47,8 +47,9 @@ const M = {
    ═══════════════════════════════════════════════ */
 export async function iniciarQuestoes() {
   if (!M.carregado) {
-    await Promise.all([_carregarQuestoes(), _carregarDadosUsuario()]);
+    await _carregarQuestoes();   // único bloqueio: JSON local
     M.carregado = true;
+    _carregarDadosUsuario();     // Firestore em background, não bloqueia a UI
   }
   _renderizarView('menu');
 }
@@ -56,6 +57,7 @@ export async function iniciarQuestoes() {
 async function _carregarQuestoes() {
   try {
     const res = await fetch('./data/questoes.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const dados = await res.json();
     M.todos = dados.questoes || [];
   } catch (e) {
@@ -68,25 +70,15 @@ async function _carregarDadosUsuario() {
   const usuario = obterUsuario();
   if (!usuario) return;
 
-  // Timeout guard: Firestore getDocs pode nunca resolver/rejeitar se o domínio
-  // não estiver autorizado no Firebase Console ou a conexão travar.
-  const timeout = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('timeout')), 8000)
-  );
-
   try {
-    const [marcacoesSnap, progressoSnap] = await Promise.race([
-      Promise.all([
-        getDocs(collection(db, 'users', usuario.uid, 'questoesStatus')),
-        getDocs(collection(db, 'users', usuario.uid, 'progresso')),
-      ]),
-      timeout,
+    const [marcacoesSnap, progressoSnap] = await Promise.all([
+      getDocs(collection(db, 'users', usuario.uid, 'questoesStatus')),
+      getDocs(collection(db, 'users', usuario.uid, 'progresso')),
     ]);
 
     marcacoesSnap.forEach(d => { M.marcacoes[d.id] = d.data().marcacao; });
     progressoSnap.forEach(d => { M.progresso[d.id] = d.data(); });
   } catch (e) {
-    // offline ou timeout — dados ficam em cache do Firestore
     console.warn('Carregando dados offline:', e);
   }
 }

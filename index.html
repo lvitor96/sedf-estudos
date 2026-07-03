@@ -207,6 +207,10 @@
           <span class="nav-icone" aria-hidden="true">⚙️</span>
           <span>Configurações</span>
         </button>
+        <button class="nav-item oculto" id="nav-admin-sidebar" data-painel="admin">
+          <span class="nav-icone" aria-hidden="true">🔧</span>
+          <span>Admin</span>
+        </button>
       </nav>
 
       <div class="sidebar-usuario">
@@ -303,6 +307,13 @@
 
         <!-- Bibliografias -->
         <section id="painel-bibliografias" class="painel" aria-label="Bibliografias">
+          <div class="painel-carregando">
+            <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
+          </div>
+        </section>
+
+        <!-- Admin (visível só para o UID autorizado) -->
+        <section id="painel-admin" class="painel" aria-label="Administração">
           <div class="painel-carregando">
             <div class="spinner" style="border-color:var(--cor-borda);border-top-color:var(--cor-secundaria);"></div>
           </div>

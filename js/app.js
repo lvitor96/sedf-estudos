@@ -324,6 +324,17 @@ async function carregarModulo(painel) {
     return;
   }
 
+  if (painel === 'admin') {
+    if (ESTADO.usuario?.uid !== ADMIN_UID) return;
+    try {
+      const { iniciarAdmin } = await import('./admin.js');
+      await iniciarAdmin();
+    } catch (err) {
+      console.error('Erro ao carregar admin:', err);
+    }
+    return;
+  }
+
   if (painel === 'config') {
     renderizarPainelConfig();
     return;
@@ -569,6 +580,14 @@ function alternarTema() {
   if (btn) btn.textContent = document.body.dataset.tema === 'escuro' ? '🌙 ON' : '☀️ OFF';
 }
 
+// ── Admin ─────────────────────────────────────────────────────
+const ADMIN_UID = 'wyUsM2mZDCdlJfhfxo61qtnKGNW2';
+
+function _revelarNavAdmin(usuario) {
+  if (usuario?.uid !== ADMIN_UID) return;
+  document.getElementById('nav-admin-sidebar')?.classList.remove('oculto');
+}
+
 // ── Perfil na sidebar ────────────────────────────────────────
 function preencherPerfil(usuario) {
   const foto = document.getElementById('sidebar-foto');
@@ -618,6 +637,7 @@ async function iniciar() {
     if (usuario) {
       ESTADO.usuario = usuario;
       preencherPerfil(usuario);
+      _revelarNavAdmin(usuario);
 
       // Recupera modo da sessão
       const modoSalvo = sessionStorage.getItem('sedf-modo');
